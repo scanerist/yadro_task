@@ -35,7 +35,7 @@ ForbiddenException = HTTPException(
 
 LinkNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
-    detail='Link not found or you do not have permission to access this link'
+    detail='Link not found or expired'
 )
 
 

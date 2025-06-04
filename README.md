@@ -41,6 +41,8 @@ docker-compose up -d
 ## 4. Применение миграций
 
 ```bash
+alembic init -t async migraition 
+
 alembic upgrade head
 ```
 

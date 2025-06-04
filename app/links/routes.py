@@ -52,7 +52,7 @@ async def list_links(
     skip, limit = pagination
     logger.info(
         f"Listing links for user {current_user.id} with active status: {is_active}, skip: {skip}, limit: {limit}")
-    user_list_links = await LinkService.get_links_for_user(session, current_user.id, is_active, skip, limit)
+    user_list_links = await LinkService.list_links(session, current_user.id, is_active, skip, limit)
     logger.info(f"Links listed for user {current_user.id}: {len(user_list_links)} links found")
     return user_list_links
 
@@ -107,8 +107,6 @@ async def redirect_link(
         session=Depends(get_session_with_commit),
 ) -> RedirectResponse:
     logger.info(f"Redirecting short code: {short_code}")
-    link = await LinkService.get_link_by_code(session, short_code)
+    link = await LinkService.redirect_link(session, short_code)
     logger.info(f"Link found: {link.short_code} with original URL: {link.orig_url}, incrementing click count")
-    await LinkService.increment_click(session, short_code)
-    logger.info(f"Click count incremented for link {link.short_code}")
     return RedirectResponse(url=link.orig_url)

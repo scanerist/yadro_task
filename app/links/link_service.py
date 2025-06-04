@@ -1,3 +1,4 @@
+from app.exceptions import LinkNotFoundException
 from app.links.dao import LinksDAO
 from app.links.models import Link
 from app.links.schemas import LinkStats
@@ -15,7 +16,7 @@ class LinkService:
         return await dao.find_one_or_none_by_field(short_code=short_code)
 
     @staticmethod
-    async def get_links_for_user(session, owner_id: int, is_active=None, skip=0, limit=10):
+    async def list_links(session, owner_id: int, is_active=None, skip=0, limit=10):
         dao = LinksDAO(session)
         return await dao.get_links_for_user(owner_id=owner_id, is_active=is_active, skip=skip, limit=limit)
 
@@ -42,3 +43,11 @@ class LinkService:
                 last_day_clicks=row[2] if len(row) > 2 else 0,
             ))
         return stats
+
+    @staticmethod
+    async def redirect_link(session, short_code: str):
+        link = await LinkService.get_link_by_code(session, short_code)
+        if not link or not link.is_active:
+            raise LinkNotFoundException
+        await LinkService.increment_click(session, short_code)
+        return link.orig_url
