@@ -50,4 +50,4 @@ class LinkService:
         if not link or not link.is_active:
             raise LinkNotFoundException
         await LinkService.increment_click(session, short_code)
-        return link.orig_url
+        return link
